@@ -60,9 +60,13 @@ class OpenApiFactory implements OpenApiFactoryInterface
                     'type' => 'string',
                     'example' => '0000'
                 ],
-                'confirm password' => [
+                'confirm_password' => [
                     'type' => 'string',
                     'example' => '0000'
+                ],
+                'rgpd' => [
+                    'type' => 'boolean',
+                    'example' => '1'
                 ]
             ]
         ]);
@@ -108,6 +112,27 @@ class OpenApiFactory implements OpenApiFactoryInterface
             )
         );
         $openApi->getPaths()->addPath('/api/login', $pathItem);
+
+
+        $pathItem = new PathItem(
+            post: new Operation(
+                operationId: 'postApiRegister',
+                tags: ['Auth'],
+                responses: [
+                    '204' => []
+                ],
+                requestBody: new RequestBody(
+                    content: new \ArrayObject([
+                        'application/json' => [
+                            'schema' => [
+                                '$ref' => '#/components/schemas/Signup'
+                            ]
+                        ]
+                    ])
+                )
+            )
+        );
+        $openApi->getPaths()->addPath('/api/register', $pathItem);
 //        $pathItem = new PathItem(
 //            post: new Operation(
 //                operationId: 'postApiLogout',

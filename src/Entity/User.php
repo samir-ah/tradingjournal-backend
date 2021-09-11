@@ -5,6 +5,7 @@ namespace App\Entity;
 use ApiPlatform\Core\Action\NotFoundAction;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Controller\MeController;
+use App\Controller\UserCreateController;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\User\JWTUserInterface;
@@ -13,14 +14,25 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @ORM\Table(name="`user`")
  * @UniqueEntity(fields={"email"}, message="There is already an account with this email")
+ * @UniqueEntity(fields={"username"}, message="There is already an account with this username")
  */
 #[ApiResource(
-    collectionOperations: [],
+    collectionOperations: [
+        'get' => [
+            'pagination_enabled' => false,
+            'security_message' => 'Vous devez être un admin',
+            'security' => 'is_granted("ROLE_ADMIN")',
+            'openapi_context' => [
+                'security' => [['bearerAuth' => []]]
+            ]
+        ]
+    ],
     itemOperations: [
         'get' => [
             'controller' => NotFoundAction::class,
@@ -34,13 +46,16 @@ use Symfony\Component\Serializer\Annotation\Groups;
             'method' => 'get',
             'controller' => MeController::class,
             'read' => false,
+            'security' => 'is_granted("ROLE_USER")',
             'openapi_context' => [
                 'security' => [['bearerAuth' => []]]
             ]
+
         ]
     ],
     normalizationContext: ['groups' => ['read:User']],
-    security: 'is_granted("ROLE_USER")'
+
+
 )]
 class User implements UserInterface, PasswordAuthenticatedUserInterface, JWTUserInterface, TwoFactorInterface
 {
@@ -54,8 +69,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, JWTUser
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
+     * @Assert\Email(
+     *     message = "The email '{{ value }}' is not a valid email."
+     * )
      */
-    #[Groups(['read:User'])]
+    #[Groups(['read:User', 'write:User'])]
     private $email;
 
     /**
@@ -73,12 +91,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, JWTUser
      * @var string The hashed password
      * @ORM\Column(type="string")
      */
+    #[Groups(['write:User'])]
     private $password;
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
      */
-    #[Groups(['read:User'])]
+    #[Groups(['read:User', 'write:User'])]
     private $username;
 
     /**
@@ -87,8 +106,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, JWTUser
     #[Groups(['read:User'])]
     private bool $isVerified = false;
 
+    /**
+     * @ORM\Column(type="datetime_immutable")
+     */
+    private $registeredAt;
+
     public function __construct()
     {
+        $this->registeredAt = new \DateTimeImmutable();
     }
 
     public function getId(): ?int
@@ -115,12 +140,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, JWTUser
      */
     public function getUserIdentifier(): string
     {
-        return (string) $this->email;
+        return (string)$this->email;
     }
 
     public function getUsername(): string
     {
-        return (string) $this->username;
+        return (string)$this->username;
     }
 
     /**
@@ -134,6 +159,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, JWTUser
 
         return array_unique($roles);
     }
+
     public function setId(?int $id): self
     {
         $this->id = $id;
@@ -193,6 +219,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, JWTUser
     {
         return $this->isVerified;
     }
+
     public function getIsVerified(): bool
     {
         return $this->isVerified;
@@ -215,9 +242,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, JWTUser
             ->setIsVerified($payload['is_verified']);
 
     }
+
     public function isEmailAuthEnabled(): bool
     {
-        return true; // This can be a persisted field to switch email code authentication on/off
+        return false; // This can be a persisted field to switch email code authentication on/off
     }
 
     public function getEmailAuthRecipient(): string
@@ -237,6 +265,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, JWTUser
     public function setEmailAuthCode(string $authCode): void
     {
         $this->authCode = $authCode;
+    }
+
+    public function getRegisteredAt(): ?\DateTimeImmutable
+    {
+        return $this->registeredAt;
+    }
+
+    public function setRegisteredAt(\DateTimeImmutable $registeredAt): self
+    {
+        $this->registeredAt = $registeredAt;
+
+        return $this;
     }
 
 }

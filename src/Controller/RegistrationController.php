@@ -6,6 +6,7 @@ use App\Entity\User;
 use App\Form\RegistrationFormType;
 use App\Repository\UserRepository;
 use App\Security\EmailVerifier;
+use Exception;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,25 +14,77 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+
+use Symfony\Component\Serializer\Exception\NotEncodableValueException;
+use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Validator\Validation;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
 
 class RegistrationController extends AbstractController
 {
-    private $emailVerifier;
 
-    public function __construct(EmailVerifier $emailVerifier)
+    public function __construct(private EmailVerifier $emailVerifier, private ValidatorInterface $validator)
     {
-        $this->emailVerifier = $emailVerifier;
+    }
+
+    #[Route('/api/register', name: 'api_register', methods: ['POST'])]
+    public function apiRegister(Request $request, UserPasswordHasherInterface $passwordHasher, SerializerInterface $serializer): Response
+    {   $jsonRaw = $request->getContent();
+        $jsonData = json_decode($jsonRaw);
+        if (!boolval($jsonData->rgpd)) {
+            return $this->json(
+                [
+                    'message' => 'Vous devez accepter la politique de confidentialité',
+                    'code' => Response::HTTP_UNPROCESSABLE_ENTITY
+                ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+        if ($jsonData->password !== $jsonData->confirm_password) {
+            return $this->json(
+                [
+                    'message' => 'Les mots de passe ne correspondent pas',
+                    'code' => Response::HTTP_UNPROCESSABLE_ENTITY
+                ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+        try {
+            /**
+             * @var $user User
+             */
+            $user = $serializer->deserialize($jsonRaw,User::class,'json');
+            $user->setIsVerified(true)
+                ->setEmail($jsonData->email)
+                ->setUsername($jsonData->username)
+                ->setPassword(
+                    $passwordHasher->hashPassword(
+                        $user,
+                        $user->getPassword()
+                    )
+                );
+            $violations = $this->validator->validate($user);
+            if (count($violations) > 0) {
+                return $this->json($violations, Response::HTTP_UNPROCESSABLE_ENTITY);
+            }
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($user);
+            $entityManager->flush();
+            return $this->json($user,Response::HTTP_CREATED,[],['groups' => 'read:User']);
+
+        }catch (Exception $e){
+            return $this->json(
+                [
+                    'message' => $e->getMessage(),
+                    'code' => Response::HTTP_INTERNAL_SERVER_ERROR
+                ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
     #[Route('/register', name: 'app_register')]
     public function register(Request $request, UserPasswordHasherInterface $passwordHasher): Response
     {
+
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
-
         if ($form->isSubmitted() && $form->isValid()) {
             // encode the plain password
             $user->setPassword(
