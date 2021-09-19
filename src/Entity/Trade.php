@@ -3,80 +3,150 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Controller\TradeCollectionGetController;
+use App\Controller\TradeCollectionPostController;
+use App\Controller\TradeGetCollectionController;
 use App\Repository\TradeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Context;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 
 /**
  * @ORM\Entity(repositoryClass=TradeRepository::class)
  */
-#[ApiResource()]
-class Trade
+#[ApiResource(
+    collectionOperations: [
+        'get' => [
+            'openapi_context' => [
+                'security' => [['bearerAuth' => []]]
+            ]
+        ],
+        'post' => [
+            'controller' => TradeCollectionPostController::class,
+            'openapi_context' => [
+                'security' => [['bearerAuth' => []]]
+            ],
+        ]
+    ],
+    itemOperations: [
+        'get' => [
+            'openapi_context' => [
+                'security' => [['bearerAuth' => []]]
+            ],
+            'controller' => TradeCollectionGetController::class
+        ]
+    ],
+    denormalizationContext: ['groups' => ['write:Trade']],
+    normalizationContext: ['groups' => ['read:Trade']],
+    security: 'is_granted("ROLE_USER")'
+
+
+)]
+class Trade implements AuthorOwnedInterface
 {
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
+    #[Groups(['read:Trade'])]
     private $id;
 
     /**
      * @ORM\Column(type="datetime_immutable")
      */
+    #[Groups(['read:Trade', 'write:Trade'])]
+    #[Context([DateTimeNormalizer::FORMAT_KEY => 'd/m/Y H:m'])]
     private $startAt;
 
     /**
      * @ORM\Column(type="datetime_immutable", nullable=true)
      */
+    #[Groups(['read:Trade', 'write:Trade'])]
+    #[Context([DateTimeNormalizer::FORMAT_KEY => 'd/m/Y H:m'])]
     private $endAt;
 
     /**
      * @ORM\Column(type="boolean",options={"default":0})
      */
-    private $isPublished = false;
+    #[Groups(['read:Trade', 'write:Trade'])]
+    private bool $isPublished = false;
 
     /**
      * @ORM\Column(type="text", nullable=true)
      */
+    #[Groups(['read:Trade', 'write:Trade'])]
     private $reasons;
 
     /**
      * @ORM\Column(type="text", nullable=true)
      */
+    #[Groups(['read:Trade', 'write:Trade'])]
     private $outcome;
 
     /**
      * @ORM\Column(type="text", nullable=true)
      */
+    #[Groups(['read:Trade', 'write:Trade'])]
     private $lesson;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $isGood;
+    #[Groups(['read:Trade', 'write:Trade'])]
+    private ?bool $isGood;
 
     /**
      * @ORM\Column(type="decimal", precision=10, scale=2, nullable=true)
      */
+    #[Groups(['read:Trade', 'write:Trade'])]
     private $finalRatio;
 
     /**
      * @ORM\OneToMany(targetEntity=TradeImage::class, mappedBy="trade", orphanRemoval=true)
      */
+    #[Groups(['read:Trade', 'write:Trade'])]
     private $tradeImages;
 
     /**
-     * @ORM\ManyToOne(targetEntity=User::class)
+     *
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="trades")
      * @ORM\JoinColumn(onDelete="SET NULL")
+     * @ORM\JoinColumn(nullable=true)
      */
+    #[Groups(['read:Trade'])]
     private $author;
 
     /**
      * @ORM\ManyToOne(targetEntity=TradeInstrument::class)
      * @ORM\JoinColumn(nullable=false)
      */
+    #[Groups(['read:Trade', 'write:Trade'])]
     private $tradeInstrument;
+
+    #[Groups(['read:Trade'])]
+    private int $tradeLikesCount = 0;
+
+    /**
+     * @return int
+     */
+    public function getTradeLikesCount()
+    {
+        return $this->tradeLikesCount;
+    }
+
+    /**
+     * @param int $tradeLikesCount
+     * @return Trade
+     */
+    public function setTradeLikesCount(int $tradeLikesCount): self
+    {
+        $this->tradeLikesCount = $tradeLikesCount;
+        return $this;
+    }
 
 
     public function __construct()
@@ -220,9 +290,9 @@ class Trade
         return $this->author;
     }
 
-    public function setAuthor(?User $author): self
+    public function setAuthor(?User $user): self
     {
-        $this->author = $author;
+        $this->author = $user;
 
         return $this;
     }
@@ -238,5 +308,11 @@ class Trade
 
         return $this;
     }
+    // Calculated field
+//    #[Groups(['read:Trade'])]
+//    public function getTradeLikesCount(): int
+//    {
+//        return 1;
+//    }
 
 }

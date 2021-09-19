@@ -12,7 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity(repositoryClass=TradeCommentRepository::class)
  */
 #[ApiResource()]
-class TradeComment
+class TradeComment implements AuthorOwnedInterface
 {
     /**
      * @ORM\Id
@@ -32,7 +32,7 @@ class TradeComment
     private $content;
 
     /**
-     * @ORM\ManyToOne(targetEntity=User::class)
+     * @ORM\ManyToOne(targetEntity=User::class,)
      * @ORM\JoinColumn(nullable=true,onDelete="SET NULL")
      */
     private $author;

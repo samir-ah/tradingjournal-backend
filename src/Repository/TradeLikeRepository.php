@@ -4,6 +4,8 @@ namespace App\Repository;
 
 use App\Entity\TradeLike;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -19,24 +21,26 @@ class TradeLikeRepository extends ServiceEntityRepository
         parent::__construct($registry, TradeLike::class);
     }
 
-    // /**
-    //  * @return TradeLike[] Returns an array of TradeLike objects
-    //  */
-    /*
-    public function findByExampleField($value)
+     /**
+      * @return int Returns the number of likes for a trade
+      */
+    public function countLikesByTrade(int $tradeId): int
     {
-        return $this->createQueryBuilder('t')
-            ->andWhere('t.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('t.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
 
-    /*
+        try {
+            return $this->getEntityManager()->createQueryBuilder()
+                ->select('count(t.trade)')
+                ->from($this->_entityName, 't')
+                ->andWhere('t.trade = :trade_id')
+                ->setParameter('trade_id', $tradeId)
+                ->getQuery()
+                ->getSingleScalarResult();
+        } catch (NoResultException | NonUniqueResultException $e) {
+            return -1;
+        }
+    }
+
+/*
     public function findOneBySomeField($value): ?TradeLike
     {
         return $this->createQueryBuilder('t')

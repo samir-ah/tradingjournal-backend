@@ -14,10 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
-
-use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 use Symfony\Component\Serializer\SerializerInterface;
-use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
 
@@ -30,8 +27,10 @@ class RegistrationController extends AbstractController
 
     #[Route('/api/register', name: 'api_register', methods: ['POST'])]
     public function apiRegister(Request $request, UserPasswordHasherInterface $passwordHasher, SerializerInterface $serializer): Response
-    {   $jsonRaw = $request->getContent();
+    {
+        $jsonRaw = $request->getContent();
         $jsonData = json_decode($jsonRaw);
+
         if (!boolval($jsonData->rgpd)) {
             return $this->json(
                 [
@@ -47,13 +46,12 @@ class RegistrationController extends AbstractController
                 ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
         try {
+
             /**
              * @var $user User
              */
-            $user = $serializer->deserialize($jsonRaw,User::class,'json');
+            $user = $serializer->deserialize($jsonRaw,User::class,'json',['groups' => 'write:User']);
             $user->setIsVerified(true)
-                ->setEmail($jsonData->email)
-                ->setUsername($jsonData->username)
                 ->setPassword(
                     $passwordHasher->hashPassword(
                         $user,

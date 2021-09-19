@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity(repositoryClass=TradeLikeRepository::class)
  */
-class TradeLike
+class TradeLike implements AuthorOwnedInterface
 {
     /**
      * @ORM\Column(type="datetime_immutable")

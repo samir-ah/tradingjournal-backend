@@ -2,10 +2,9 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Action\NotFoundAction;
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Controller\MeController;
-use App\Controller\UserCreateController;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\User\JWTUserInterface;
@@ -13,8 +12,11 @@ use Scheb\TwoFactorBundle\Model\Email\TwoFactorInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Context;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Constraints\Collection;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
@@ -35,11 +37,12 @@ use Symfony\Component\Validator\Constraints as Assert;
     ],
     itemOperations: [
         'get' => [
-            'controller' => NotFoundAction::class,
-            'openapi_context' => ['summary' => 'hidden'],
-            'read' => false,
-            'output' => false
+            'openapi_context' => [
+                'security' => [['bearerAuth' => []]]
+            ],
+            'security' => 'is_granted("ROLE_ADMIN") or object.getId() == user.getId()',
         ],
+
         'me' => [
             'pagination_enabled' => false,
             'path' => '/me',
@@ -47,12 +50,14 @@ use Symfony\Component\Validator\Constraints as Assert;
             'controller' => MeController::class,
             'read' => false,
             'security' => 'is_granted("ROLE_USER")',
+            'security_message' => 'Vous devez être connecté',
             'openapi_context' => [
                 'security' => [['bearerAuth' => []]]
             ]
 
         ]
     ],
+    denormalizationContext: ['groups' => ['write:User']],
     normalizationContext: ['groups' => ['read:User']],
 
 
@@ -64,7 +69,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, JWTUser
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    #[Groups(['read:User'])]
+    #[Groups(['read:User','read:Trade'])]
     private $id;
 
     /**
@@ -97,7 +102,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, JWTUser
     /**
      * @ORM\Column(type="string", length=180, unique=true)
      */
-    #[Groups(['read:User', 'write:User'])]
+    #[Groups(['read:User', 'write:User','read:Trade'])]
     private $username;
 
     /**
@@ -109,7 +114,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, JWTUser
     /**
      * @ORM\Column(type="datetime_immutable")
      */
+    #[Groups(['read:User'])]
+    #[ApiProperty(['security' => 'is_granted("ROLE_ADMIN") or is_granted("ROLE_USER") and object.getId() == user.getId()'])]
+    #[Context([DateTimeNormalizer::FORMAT_KEY => 'd/m/Y H:m'])]
     private $registeredAt;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Trade::class, mappedBy="author")
+     */
+    private $trades;
 
     public function __construct()
     {
@@ -277,6 +290,40 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, JWTUser
         $this->registeredAt = $registeredAt;
 
         return $this;
+    }
+    /**
+     * @return Collection|Trade[]
+     */
+    public function getTrades(): Collection
+    {
+        return $this->trades;
+    }
+
+    public function addTrade(Trade $trade): self
+    {
+        if (!$this->trades->contains($trade)) {
+            $this->trades[] = $trade;
+            $trade->setAuthor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTrade(Trade $trade): self
+    {
+        if ($this->trades->removeElement($trade)) {
+            // set the owning side to null (unless already changed)
+            if ($trade->getAuthor() === $this) {
+                $trade->setAuthor(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->id;
     }
 
 }
