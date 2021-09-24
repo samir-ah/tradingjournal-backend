@@ -5,7 +5,6 @@ namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Controller\TradeCollectionGetController;
 use App\Controller\TradeCollectionPostController;
-use App\Controller\TradeGetCollectionController;
 use App\Repository\TradeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -22,6 +21,9 @@ use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
         'get' => [
             'openapi_context' => [
                 'security' => [['bearerAuth' => []]]
+            ],
+            'normalization_context' => [
+                'groups' => ['read:Trade:Collection']
             ]
         ],
         'post' => [
@@ -36,7 +38,20 @@ use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
             'openapi_context' => [
                 'security' => [['bearerAuth' => []]]
             ],
-            'controller' => TradeCollectionGetController::class
+            'controller' => TradeCollectionGetController::class,
+            'security' => 'is_granted("TRADE_VIEW",object)'
+        ],
+        'delete' => [
+            'openapi_context' => [
+                'security' => [['bearerAuth' => []]]
+            ],
+            'security' => 'is_granted("ROLE_ADMIN") or is_granted("CAN_EDIT",object)'
+        ],
+        'put' => [
+            'openapi_context' => [
+                'security' => [['bearerAuth' => []]]
+            ],
+            'security' => 'is_granted("ROLE_ADMIN") or is_granted("CAN_EDIT",object)'
         ]
     ],
     denormalizationContext: ['groups' => ['write:Trade']],
@@ -52,27 +67,27 @@ class Trade implements AuthorOwnedInterface
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    #[Groups(['read:Trade'])]
+    #[Groups(['read:Trade', 'read:Trade:Collection'])]
     private $id;
 
     /**
      * @ORM\Column(type="datetime_immutable")
      */
-    #[Groups(['read:Trade', 'write:Trade'])]
+    #[Groups(['read:Trade', 'write:Trade', 'read:Trade:Collection'])]
     #[Context([DateTimeNormalizer::FORMAT_KEY => 'd/m/Y H:m'])]
     private $startAt;
 
     /**
      * @ORM\Column(type="datetime_immutable", nullable=true)
      */
-    #[Groups(['read:Trade', 'write:Trade'])]
+    #[Groups(['read:Trade', 'write:Trade', 'read:Trade:Collection'])]
     #[Context([DateTimeNormalizer::FORMAT_KEY => 'd/m/Y H:m'])]
     private $endAt;
 
     /**
      * @ORM\Column(type="boolean",options={"default":0})
      */
-    #[Groups(['read:Trade', 'write:Trade'])]
+    #[Groups(['read:Trade', 'write:Trade', 'read:Trade:Collection'])]
     private bool $isPublished = false;
 
     /**
@@ -96,13 +111,13 @@ class Trade implements AuthorOwnedInterface
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
-    #[Groups(['read:Trade', 'write:Trade'])]
+    #[Groups(['read:Trade', 'write:Trade', 'read:Trade:Collection'])]
     private ?bool $isGood;
 
     /**
      * @ORM\Column(type="decimal", precision=10, scale=2, nullable=true)
      */
-    #[Groups(['read:Trade', 'write:Trade'])]
+    #[Groups(['read:Trade', 'write:Trade', 'read:Trade:Collection'])]
     private $finalRatio;
 
     /**
@@ -117,17 +132,17 @@ class Trade implements AuthorOwnedInterface
      * @ORM\JoinColumn(onDelete="SET NULL")
      * @ORM\JoinColumn(nullable=true)
      */
-    #[Groups(['read:Trade'])]
+    #[Groups(['read:Trade', 'read:Trade:Collection'])]
     private $author;
 
     /**
      * @ORM\ManyToOne(targetEntity=TradeInstrument::class)
      * @ORM\JoinColumn(nullable=false)
      */
-    #[Groups(['read:Trade', 'write:Trade'])]
+    #[Groups(['read:Trade', 'write:Trade', 'read:Trade:Collection'])]
     private $tradeInstrument;
 
-    #[Groups(['read:Trade'])]
+    #[Groups(['read:Trade', 'read:Trade:Collection'])]
     private int $tradeLikesCount = 0;
 
     /**

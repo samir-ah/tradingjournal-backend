@@ -10,7 +10,14 @@ use Symfony\Component\Serializer\Annotation\Groups;
 /**
  * @ORM\Entity(repositoryClass=TradeInstrumentRepository::class)
  */
-#[ApiResource()]
+#[ApiResource(
+    collectionOperations: [
+        'get' => []
+], itemOperations: [
+    'get' => []
+],
+    security: 'is_granted("ROLE_USER")'
+)]
 class TradeInstrument
 {
     /**

@@ -102,7 +102,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, JWTUser
     /**
      * @ORM\Column(type="string", length=180, unique=true)
      */
-    #[Groups(['read:User', 'write:User','read:Trade'])]
+    #[Groups(['read:User', 'write:User','read:Trade','read:TradeComment'])]
     private $username;
 
     /**

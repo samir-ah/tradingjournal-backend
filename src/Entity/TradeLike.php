@@ -2,17 +2,43 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
+use App\Controller\TradeLikeCollectionPostController;
 use App\Repository\TradeLikeRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=TradeLikeRepository::class)
+ * @UniqueEntity(fields={"trade","author"}, message="Vous avez déjà liké ce trade")
  */
+
+#[ApiResource(
+    collectionOperations: [
+        'post' => [
+            'controller' => TradeLikeCollectionPostController::class
+        ],
+
+    ],
+    itemOperations: [
+        'get' =>[
+            'security' => 'is_granted("ROLE_ADMIN") or is_granted("TRADE_VIEW",object.getTrade())'
+        ],
+        'delete' => [
+            'security' => 'is_granted("ROLE_ADMIN") or is_granted("CAN_EDIT",object)'
+        ]
+    ],
+    denormalizationContext: ['groups' => ['write:TradeLike']],
+    normalizationContext: ['groups' => ['read:TradeLike']],
+    security: 'is_granted("ROLE_USER")'
+)]
 class TradeLike implements AuthorOwnedInterface
 {
     /**
      * @ORM\Column(type="datetime_immutable")
      */
+    #[Groups(['read:TradeLike'])]
     private $likedAt;
 
     /**
@@ -20,6 +46,7 @@ class TradeLike implements AuthorOwnedInterface
      * @ORM\ManyToOne(targetEntity=Trade::class)
      * @ORM\JoinColumn(nullable=false,onDelete="CASCADE")
      */
+    #[Groups(['write:TradeLike','read:TradeLike'])]
     private $trade;
 
     /**
@@ -27,11 +54,13 @@ class TradeLike implements AuthorOwnedInterface
      * @ORM\ManyToOne(targetEntity=User::class)
      * @ORM\JoinColumn(nullable=false,onDelete="CASCADE")
      */
+    #[Groups(['read:TradeLike'])]
     private $author;
 
-    public function getId(): ?int
+
+    public function __construct()
     {
-        return $this->id;
+        $this->likedAt = new \DateTimeImmutable();
     }
 
     public function getLikedAt(): ?\DateTimeImmutable

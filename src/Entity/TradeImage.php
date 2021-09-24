@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Controller\TradeImageCollectionPostController;
 use App\Repository\TradeImageRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
@@ -19,8 +20,9 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  * @Vich\Uploadable
  */
 #[ApiResource(
+
     collectionOperations: [
-        'get',
+
         'post' => [
             'openapi_context' => [
                 'requestBody' => [
@@ -38,11 +40,23 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
                         ]
                     ]
                 ]
-            ]
+            ],
+            'controller' => TradeImageCollectionPostController::class
         ],
+
+    ],
+    itemOperations: [
+        'delete' => [
+            'security' => 'is_granted("ROLE_ADMIN") or is_granted("CAN_EDIT",object.getTrade())'
+        ],
+        'get' =>[
+            'security' => 'is_granted("TRADE_VIEW",object.getTrade())'
+        ]
     ],
     denormalizationContext: ['groups' => ['write:TradeImage']],
     normalizationContext: ['groups' => ['read:TradeImage']],
+    security: 'is_granted("ROLE_USER")'
+
 )]
 class TradeImage
 {
@@ -67,10 +81,10 @@ class TradeImage
     #[
         NotBlank(),
         Image(
-        maxSize: "1024k",
-        mimeTypes: ["image/jpeg", "image/png"],
-        mimeTypesMessage: "Ce type de fichier n'est pas autorisé"
-    )]
+            maxSize: "1024k",
+            mimeTypes: ["image/jpeg", "image/png"],
+            mimeTypesMessage: "Ce type de fichier n'est pas autorisé"
+        )]
     #[Groups(['write:TradeImage'])]
     private ?File $file = null;
     /**
@@ -83,10 +97,9 @@ class TradeImage
      * @ORM\ManyToOne(targetEntity=Trade::class, inversedBy="tradeImages")
      * @ORM\JoinColumn(nullable=false)
      */
-    #[NotBlank()]
     #[
-        Groups(['write:TradeImage','read:TradeImage']),
-        ApiProperty(['fetchEager' => false])
+        Groups(['write:TradeImage']),
+        NotBlank()
     ]
     private $trade;
 
@@ -112,7 +125,7 @@ class TradeImage
         return $this->imageFile;
     }
 
-    public function setImageFile(string $imageFile): self
+    public function setImageFile(?string $imageFile): self
     {
         $this->imageFile = $imageFile;
 

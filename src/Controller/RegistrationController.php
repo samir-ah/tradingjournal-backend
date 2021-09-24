@@ -35,14 +35,12 @@ class RegistrationController extends AbstractController
             return $this->json(
                 [
                     'message' => 'Vous devez accepter la politique de confidentialité',
-                    'code' => Response::HTTP_UNPROCESSABLE_ENTITY
                 ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
         if ($jsonData->password !== $jsonData->confirm_password) {
             return $this->json(
                 [
                     'message' => 'Les mots de passe ne correspondent pas',
-                    'code' => Response::HTTP_UNPROCESSABLE_ENTITY
                 ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
         try {
@@ -71,7 +69,6 @@ class RegistrationController extends AbstractController
             return $this->json(
                 [
                     'message' => $e->getMessage(),
-                    'code' => Response::HTTP_INTERNAL_SERVER_ERROR
                 ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
