@@ -136,7 +136,6 @@ class ApiResetPasswordController extends AbstractController
 
                 $mailer->send($email);
             } catch (ResetPasswordExceptionInterface | TransportExceptionInterface $e) {
-
             }
         }
     }

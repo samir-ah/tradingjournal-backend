@@ -24,6 +24,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
     collectionOperations: [
 
         'post' => [
+            'deserialize' => false,
             'openapi_context' => [
                 'requestBody' => [
                     'content' => [
@@ -79,12 +80,12 @@ class TradeImage
      * @Vich\UploadableField(mapping="trade_image", fileNameProperty="imageFile")
      */
     #[
-        NotBlank(),
         Image(
-            maxSize: "1024k",
+            maxSize: "2048k",
             mimeTypes: ["image/jpeg", "image/png"],
             mimeTypesMessage: "Ce type de fichier n'est pas autorisé"
-        )]
+        )
+    ]
     #[Groups(['write:TradeImage'])]
     private ?File $file = null;
     /**

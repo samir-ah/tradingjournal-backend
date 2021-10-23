@@ -42,7 +42,7 @@ use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
         'createdAt' => 'DESC'
 ],
     paginationItemsPerPage: 7,
-//    security: 'is_granted("ROLE_USER")'
+    security: 'is_granted("ROLE_USER")'
 )]
 #[ApiFilter(SearchFilter::class, properties: ['trade' => 'exact'])]
 class TradeComment implements AuthorOwnedInterface

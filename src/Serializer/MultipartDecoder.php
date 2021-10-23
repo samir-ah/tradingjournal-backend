@@ -6,9 +6,9 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Serializer\Encoder\DecoderInterface;
 
 
-class MultipartDecoder implements DecoderInterface
+class MultipartDecoder //implements DecoderInterface
 {
-    public const FORMAT = 'multipart';
+    /*public const FORMAT = 'multipart';
     public function __construct(private RequestStack $requestStack) {}
     public function decode($data, $format, array $context = [])
     {
@@ -28,5 +28,5 @@ class MultipartDecoder implements DecoderInterface
     public function supportsDecoding($format): bool
     {
         return self::FORMAT === $format;
-    }
+    }*/
 }

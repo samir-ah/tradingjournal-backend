@@ -1,0 +1,668 @@
+{
+	"info": {
+		"_postman_id": "c0f56b79-4cd9-4dc2-909e-20effc20347e",
+		"name": "tradingjournal",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "auth",
+			"item": [
+				{
+					"name": "/api/login",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/ld+json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"username\": \"user@test.com\",\r\n  \"password\": \"testtest\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/me",
+					"protocolProfileBehavior": {
+						"strictSSL": false
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/ld+json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/me",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/users",
+					"protocolProfileBehavior": {
+						"strictSSL": false
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/ld+json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/users/",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"users",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/users",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/ld+json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"user@example.com\",\r\n    \"password\": \"string\",\r\n    \"username\": \"string\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/register",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/ld+json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"username\": \"john.esmxfee\",\r\n  \"email\": \"usesd@tqeexsfn.com\",\r\n  \"password\": \"0000\",\r\n  \"confirm_password\": \"0000\",\r\n  \"rgpd\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/register",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/reset-password",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/ld+json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"user@test.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/reset-password",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"reset-password"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/reset-password/reset/",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/ld+json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"password\": \"testtest\",\r\n  \"password_confirm\": \"testtest\"\r\n\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/reset-password/reset/TW3nrytGDU3iJ3nC4x14nyD8hZuaZSSpDY9R6w5l",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"reset-password",
+								"reset",
+								"TW3nrytGDU3iJ3nC4x14nyD8hZuaZSSpDY9R6w5l"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/2fa_check",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/ld+json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"_auth_code\": \"990169\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/login/2fa_check",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"login",
+								"2fa_check"
+							],
+							"query": [
+								{
+									"key": "_auth_code",
+									"value": "345557",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "trade",
+			"item": [
+				{
+					"name": "/api/trades",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/trades",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"trades"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/trades",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/trades/3",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"trades",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/trades",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"startAt\": \"17/09/2021 07:09\",\r\n    \"reasons\": \"reve\",\r\n    \"outcome\": \"reve\",\r\n    \"lesson\": \"rver\",\r\n    \"isGood\": true,\r\n    \"finalRatio\": \"2\",\r\n    \"tradeInstrument\": \"api/trade_instruments/1\",\r\n    \"isPublished\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/trades",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"trades"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/trades",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"reasons\": \"new\",\r\n    \"outcome\": \"reve\",\r\n    \"lesson\": \"rver\",\r\n    \"isGood\": true,\r\n    \"isPublished\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/trades/5",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"trades",
+								"5"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "trade_images",
+			"item": [
+				{
+					"name": "/api/trade_images",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/trade_images/11",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"trade_images",
+								"11"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/trade_images",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/trade_images/10",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"trade_images",
+								"10"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/trade_images",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/ld+json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/C:/Users/samir/Pictures/dashboard.png"
+								},
+								{
+									"key": "trade",
+									"value": "api/trades/5",
+									"type": "text"
+								},
+								{
+									"key": "",
+									"type": "file",
+									"src": [],
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/trade_images",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"trade_images"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "trade_comments",
+			"item": [
+				{
+					"name": "/api/trade_comments",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"title\": \"titre test\",\r\n  \"content\": \"string yhbeyrub kjnre ijbfeiuh\",\r\n  \"trade\": \"api/trades/6\"\r\n\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/trade_comments?page=1&trade=3",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"trade_comments"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "trade",
+									"value": "3"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/trade_comments",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/ld+json",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/trade_comments?page=1&trade=3",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"trade_comments"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "trade",
+									"value": "3"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "trade_instruments",
+			"item": [
+				{
+					"name": "/api/trade_instruments",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/trade_instruments/",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"trade_instruments",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "trade_likes",
+			"item": [
+				{
+					"name": "/api/trade_likes",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"trade\": \"api/trades/3\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/trade_likes",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"trade_likes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/trade_likes",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/trade_likes/trade=6;author=2",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"trade_likes",
+								"trade=6;author=2"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE2MzI0NjkwNzYsImV4cCI6MTYzMjU1NTQ3Niwicm9sZXMiOlsiUk9MRV9VU0VSIl0sImVtYWlsIjoidXNlckB0ZXN0LmNvbSIsImlkIjoxLCJ1c2VybmFtZSI6InRlc3QudGVzdCIsImlzX3ZlcmlmaWVkIjp0cnVlfQ.vN1cUgBNe_iXpdlQaPYZmioaQljWtmobE2rvlwTC662LyKFTP-YLI-7rkpDTs2bDs_XkMDJmheV7wbhm7ULti_mifsPsbZ3aU8ZsyMZn7UxIH0FFGOD5X_8Eqv2XRIFtZJZ_NLv0eKAqXhuD26zV0HXMacCCrUnQM-zIab7iPp0UhfxABBXsIuwdjBYKHgjKCOfyvf8JpBPxelMYJuhceMXTeQnoelYuRikdUO4M0lnkVTYHULpLscD1VZE08D2V2RMuGTvk-1UTd0KKU3wRa0VW6VwaixlMlEejKEPR2AI26nVvVi4QQXPz7Eb0Ur2R-wBCi9ruthWmWPEj9-qE6w",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "https://127.0.0.1:8000"
+		}
+	]
+}

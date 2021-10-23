@@ -21,8 +21,8 @@ use Symfony\Component\Validator\Constraints\Collection;
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @ORM\Table(name="`user`")
- * @UniqueEntity(fields={"email"}, message="There is already an account with this email")
- * @UniqueEntity(fields={"username"}, message="There is already an account with this username")
+ * @UniqueEntity(fields={"email"}, message="Un compte existe déjà avec cet email")
+ * @UniqueEntity(fields={"username"}, message="Un compte existe déjà avec ce pseudo")
  */
 #[ApiResource(
     collectionOperations: [
