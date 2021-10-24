@@ -116,7 +116,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, JWTUser
      */
     #[Groups(['read:User'])]
     #[ApiProperty(['security' => 'is_granted("ROLE_ADMIN") or is_granted("ROLE_USER") and object.getId() == user.getId()'])]
-    #[Context([DateTimeNormalizer::FORMAT_KEY => 'd/m/Y H:m'])]
+    #[Context([DateTimeNormalizer::FORMAT_KEY => 'd/m/Y H:i'])]
     private $registeredAt;
 
     /**

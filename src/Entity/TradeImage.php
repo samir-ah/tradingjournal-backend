@@ -108,7 +108,7 @@ class TradeImage
      * @ORM\Column(type="datetime_immutable")
      */
     #[Groups(['read:TradeImage'])]
-    #[Context([DateTimeNormalizer::FORMAT_KEY => 'd/m/Y H:m:s'])]
+    #[Context([DateTimeNormalizer::FORMAT_KEY => 'd/m/Y H:i:s'])]
     private $createdAt;
 
     public function __construct()

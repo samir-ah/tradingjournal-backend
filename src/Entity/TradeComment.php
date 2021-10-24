@@ -96,7 +96,7 @@ class TradeComment implements AuthorOwnedInterface
      * @ORM\Column(type="datetime_immutable")
      */
     #[Groups(['read:TradeComment'])]
-    #[Context([DateTimeNormalizer::FORMAT_KEY => 'd/m/Y H:m'])]
+    #[Context([DateTimeNormalizer::FORMAT_KEY => 'd/m/Y H:i'])]
     private $createdAt;
 
     public function __construct()

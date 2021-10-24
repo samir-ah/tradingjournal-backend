@@ -74,14 +74,14 @@ class Trade implements AuthorOwnedInterface
      * @ORM\Column(type="datetime_immutable")
      */
     #[Groups(['read:Trade', 'write:Trade', 'read:Trade:Collection'])]
-    #[Context([DateTimeNormalizer::FORMAT_KEY => 'd/m/Y H:m'])]
+    #[Context([DateTimeNormalizer::FORMAT_KEY => 'd/m/Y H:i'])]
     private $startAt;
 
     /**
      * @ORM\Column(type="datetime_immutable", nullable=true)
      */
     #[Groups(['read:Trade', 'write:Trade', 'read:Trade:Collection'])]
-    #[Context([DateTimeNormalizer::FORMAT_KEY => 'd/m/Y H:m'])]
+    #[Context([DateTimeNormalizer::FORMAT_KEY => 'd/m/Y H:i'])]
     private $endAt;
 
     /**

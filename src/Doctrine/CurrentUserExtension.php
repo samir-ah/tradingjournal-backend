@@ -58,23 +58,22 @@ class CurrentUserExtension implements QueryCollectionExtensionInterface, QueryIt
                 switch ($resourceClass) {
                     case Trade::class:
                         $queryBuilder
-                            ->andWhere("$alias.isPublished = 1")
-                            ->orWhere("$alias.author = :current_user")
+//                            ->orWhere("$alias.isPublished = 1")
+                            ->andWhere("$alias.author = :current_user OR $alias.isPublished = 1")
+
                             ->setParameter('current_user', $this->security->getUser()->getId());
                         break;
-                    case TradeImage::class:
-                        $queryBuilder
-                            ->innerJoin("$alias.trade", 't')
-                            ->innerJoin("t.author", 'u')
-                            ->andwhere("t.isPublished = 1")
-                            ->orWhere("t.author = :current_user")
-                            ->setParameter('current_user', $this->security->getUser()->getId());
-                        break;
+//                    case TradeImage::class:
+//                        $queryBuilder
+//                            ->innerJoin("$alias.trade", 't')
+//                            ->innerJoin("t.author", 'u')
+//                            ->andWhere("t.isPublished = 1 OR t.author = :current_user")
+//                            ->setParameter('current_user', $this->security->getUser()->getId());
+//                        break;
                     case TradeComment::class:
                         $queryBuilder
                             ->innerJoin("$alias.trade", 't')
-                            ->where("$alias.author = :current_user")
-                            ->orWhere("t.isPublished = 1")
+                            ->andWhere("$alias.author = :current_user OR t.isPublished = 1")
                             ->setParameter('current_user', $this->security->getUser()->getId());
                         break;
 //                       dd($this->security->getUser()->getId(),$queryBuilder->getDQL());
