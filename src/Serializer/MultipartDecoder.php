@@ -2,9 +2,6 @@
 
 namespace App\Serializer;
 
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Serializer\Encoder\DecoderInterface;
-
 
 class MultipartDecoder //implements DecoderInterface
 {

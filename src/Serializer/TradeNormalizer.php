@@ -3,13 +3,11 @@
 namespace App\Serializer;
 
 use App\Entity\Trade;
-use App\Entity\TradeImage;
 use App\Repository\TradeLikeRepository;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Serializer\Normalizer\ContextAwareNormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerAwareInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerAwareTrait;
-use Vich\UploaderBundle\Storage\StorageInterface;
 
 class TradeNormalizer implements ContextAwareNormalizerInterface, NormalizerAwareInterface
 {

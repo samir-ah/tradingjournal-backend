@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Entity\TradeImage;
 use App\Entity\TradeLike;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpKernel\Attribute\AsController;

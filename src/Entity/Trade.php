@@ -5,7 +5,6 @@ namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
-use App\Controller\TradeGetController;
 use App\Controller\TradeCollectionPostController;
 use App\Filter\LikedByMeFilter;
 use App\Repository\TradeRepository;

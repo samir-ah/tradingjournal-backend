@@ -11,8 +11,6 @@ use App\Entity\Trade;
 use App\Entity\TradeComment;
 use App\Entity\TradeImage;
 use App\Entity\TradeLike;
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\Security\Core\Security;
 
