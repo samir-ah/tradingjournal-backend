@@ -2,9 +2,12 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
-use App\Controller\TradeCollectionGetController;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use App\Controller\TradeGetController;
 use App\Controller\TradeCollectionPostController;
+use App\Filter\LikedByMeFilter;
 use App\Repository\TradeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -24,7 +27,8 @@ use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
             ],
             'normalization_context' => [
                 'groups' => ['read:Trade:Collection']
-            ]
+            ],
+
         ],
         'post' => [
             'controller' => TradeCollectionPostController::class,
@@ -38,7 +42,7 @@ use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
             'openapi_context' => [
                 'security' => [['bearerAuth' => []]]
             ],
-            'controller' => TradeCollectionGetController::class,
+//            'controller' => TradeGetController::class,
             'security' => 'is_granted("TRADE_VIEW",object)'
         ],
         'delete' => [
@@ -56,10 +60,13 @@ use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
     ],
     denormalizationContext: ['groups' => ['write:Trade']],
     normalizationContext: ['groups' => ['read:Trade']],
-    security: 'is_granted("ROLE_USER")'
+    order: ["id" => "DESC"],
+    paginationItemsPerPage: 4,
+    security: 'is_granted("ROLE_USER")',
 
 
 )]
+#[ApiFilter(SearchFilter::class, properties: ['author' => 'exact','isPublished' => 'exact'])]
 class Trade implements AuthorOwnedInterface
 {
     /**
@@ -93,19 +100,19 @@ class Trade implements AuthorOwnedInterface
     /**
      * @ORM\Column(type="text", nullable=true)
      */
-    #[Groups(['read:Trade', 'write:Trade'])]
+    #[Groups(['read:Trade', 'write:Trade','read:Trade:Collection'])]
     private $reasons;
 
     /**
      * @ORM\Column(type="text", nullable=true)
      */
-    #[Groups(['read:Trade', 'write:Trade'])]
+    #[Groups(['read:Trade', 'write:Trade','read:Trade:Collection'])]
     private $outcome;
 
     /**
      * @ORM\Column(type="text", nullable=true)
      */
-    #[Groups(['read:Trade', 'write:Trade'])]
+    #[Groups(['read:Trade', 'write:Trade','read:Trade:Collection'])]
     private $lesson;
 
     /**
@@ -144,6 +151,8 @@ class Trade implements AuthorOwnedInterface
 
     #[Groups(['read:Trade', 'read:Trade:Collection'])]
     private int $tradeLikesCount = 0;
+    #[Groups(['read:Trade', 'read:Trade:Collection'])]
+    private bool $likedByMe = false;
 
     /**
      * @return int
@@ -329,5 +338,23 @@ class Trade implements AuthorOwnedInterface
 //    {
 //        return 1;
 //    }
+    /**
+     * @return bool|null
+     */
+    public function getLikedByMe(): ?bool
+    {
+        return $this->likedByMe;
+    }
+
+    /**
+     * @param bool $likedByMe
+     * @return Trade
+     */
+    public function setLikedByMe(bool $likedByMe): self
+    {
+        $this->likedByMe = $likedByMe;
+        return $this;
+    }
+
 
 }

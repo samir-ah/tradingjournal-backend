@@ -69,7 +69,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, JWTUser
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    #[Groups(['read:User','read:Trade'])]
+    #[Groups(['read:User','read:Trade','read:Trade:Collection'])]
     private $id;
 
     /**
@@ -102,7 +102,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, JWTUser
     /**
      * @ORM\Column(type="string", length=180, unique=true)
      */
-    #[Groups(['read:User', 'write:User','read:Trade','read:TradeComment'])]
+    #[Groups(['read:User', 'write:User','read:Trade','read:TradeComment','read:Trade:Collection'])]
     private $username;
 
     /**

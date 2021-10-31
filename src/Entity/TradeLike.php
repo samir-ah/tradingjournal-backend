@@ -19,6 +19,14 @@ use Symfony\Component\Serializer\Annotation\Groups;
         'post' => [
             'controller' => TradeLikeCollectionPostController::class
         ],
+        'get' => [
+            'openapi_context' => [
+                'security' => [['bearerAuth' => []]]
+            ],
+            'normalization_context' => [
+                'groups' => ['read:TradeLike','read:Trade:Collection']
+            ]
+        ],
 
     ],
     itemOperations: [
@@ -31,7 +39,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
     ],
     denormalizationContext: ['groups' => ['write:TradeLike']],
     normalizationContext: ['groups' => ['read:TradeLike']],
-    security: 'is_granted("ROLE_USER")'
+    order: ["likedAt" => "DESC"], paginationItemsPerPage: 4, security: 'is_granted("ROLE_USER")'
 )]
 class TradeLike implements AuthorOwnedInterface
 {

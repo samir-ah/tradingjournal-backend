@@ -25,12 +25,13 @@ class TradeInstrument
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
+    #[Groups(['read:Trade','read:Trade:Collection'])]
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    #[Groups(['read:Trade'])]
+    #[Groups(['read:Trade','read:Trade:Collection'])]
     private $name;
 
     public function getId(): ?int

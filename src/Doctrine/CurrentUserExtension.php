@@ -10,6 +10,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use App\Entity\Trade;
 use App\Entity\TradeComment;
 use App\Entity\TradeImage;
+use App\Entity\TradeLike;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
@@ -17,9 +18,9 @@ use Symfony\Component\Security\Core\Security;
 
 class CurrentUserExtension implements QueryCollectionExtensionInterface, QueryItemExtensionInterface
 {
-    private const SUPPORTED_ENTITIES = [Trade::class, TradeImage::class, TradeComment::class];
+    private const SUPPORTED_ENTITIES = [Trade::class, TradeImage::class, TradeComment::class, TradeLike::class];
 
-    public function __construct(private Security $security, private EntityManagerInterface $em)
+    public function __construct(private Security $security)
     {
     }
 
@@ -58,9 +59,10 @@ class CurrentUserExtension implements QueryCollectionExtensionInterface, QueryIt
                 switch ($resourceClass) {
                     case Trade::class:
                         $queryBuilder
-//                            ->orWhere("$alias.isPublished = 1")
+//                            ->orWhere("$alias.isPublished = 1")$queryBuilder
+//
+//                            ->leftJoin("App:TradeLike", 'tl',"WITH","tl.author = $alias.author AND tl.trade = $alias.id")
                             ->andWhere("$alias.author = :current_user OR $alias.isPublished = 1")
-
                             ->setParameter('current_user', $this->security->getUser()->getId());
                         break;
 //                    case TradeImage::class:
@@ -74,6 +76,12 @@ class CurrentUserExtension implements QueryCollectionExtensionInterface, QueryIt
                         $queryBuilder
                             ->innerJoin("$alias.trade", 't')
                             ->andWhere("$alias.author = :current_user OR t.isPublished = 1")
+                            ->setParameter('current_user', $this->security->getUser()->getId());
+                        break;
+//                       dd($this->security->getUser()->getId(),$queryBuilder->getDQL());
+                    case TradeLike::class:
+                        $queryBuilder
+                            ->andWhere("$alias.author = :current_user")
                             ->setParameter('current_user', $this->security->getUser()->getId());
                         break;
 //                       dd($this->security->getUser()->getId(),$queryBuilder->getDQL());

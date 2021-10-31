@@ -8,7 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 
 #[AsController]
-class TradeCollectionGetController extends AbstractController
+class TradeGetController extends AbstractController
 {
 
     public function __construct(private TradeLikeRepository $likeRepository)
@@ -17,6 +17,7 @@ class TradeCollectionGetController extends AbstractController
 
     public function __invoke(Trade $data):Trade
     {
-        return $data->setTradeLikesCount($this->likeRepository->count(['trade' => $data->getId()]));
+        return $data->setLikedByMe($this->likeRepository->count(['trade' => $data->getId(),
+            'author' => $this->getUser()->getId()]));
     }
 }

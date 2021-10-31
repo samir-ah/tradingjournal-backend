@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Trade;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -36,15 +37,46 @@ class TradeRepository extends ServiceEntityRepository
     }
     */
 
-    /*
-    public function findOneBySomeField($value): ?Trade
+
+    public function findPerformanceGroupByMonth(int $userId, int $lastMonths): array
     {
         return $this->createQueryBuilder('t')
-            ->andWhere('t.exampleField = :val')
-            ->setParameter('val', $value)
+            ->select('YEAR(t.startAt) as year, MONTH(t.startAt) as month', 'SUM(t.finalRatio) AS ratio')
+            ->andWhere('t.author = :authorId')
+            ->andWhere("t.startAt > DATESUB(CURRENT_DATE(), :lastMonths, 'MONTH')")
+            ->groupBy("month")
+            ->setParameter('authorId', $userId)
+            ->setParameter('lastMonths', $lastMonths)
             ->getQuery()
-            ->getOneOrNullResult()
-        ;
+            ->getResult();
     }
-    */
+
+    public function findPerformance(int $userId, int $lastMonths): array
+    {
+        $rsm = new ResultSetMapping();
+        $rsm->addScalarResult("cumulative_sum", "cumulative_sum");
+        $sql = 'SELECT SUM(final_ratio) OVER(ORDER BY id) AS cumulative_sum' .
+            ' FROM trade' .
+            ' WHERE author_id = :authorId' .
+            ' AND start_at > DATE_SUB(now(), INTERVAL :lastMonths MONTH)';
+        return $this->getEntityManager()->createNativeQuery($sql, $rsm)
+            ->setParameter('authorId', $userId)
+            ->setParameter('lastMonths', $lastMonths)
+            ->getScalarResult();
+
+    }
+
+    /**
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function findTotalPerformanceSum(int $userId): array
+    {
+        return $this->createQueryBuilder('t')
+            ->select('SUM(t.finalRatio) AS total')
+            ->andWhere('t.author = :authorId')
+            ->setParameter('authorId', $userId)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
 }
