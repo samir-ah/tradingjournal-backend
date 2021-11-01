@@ -1,0 +1,9 @@
+<h1>Bonjour,</h1>
+
+<p>Cliquez sur le lien suivant pour créer un nouveau mot de passe</p>
+{#"http://#{app.request.host}"#}
+<a href="{{ "https://localhost:3000/auth/forget-password/#{resetToken.token}" }}">Réinitialiser le mot de passe</a>
+
+<p>Ce lien expire dans {{ resetToken.expirationMessageKey|trans(resetToken.expirationMessageData, 'ResetPasswordBundle') }}.</p>
+
+<p>Bien à vous</p>
