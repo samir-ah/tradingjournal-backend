@@ -6,6 +6,7 @@ use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Controller\TradeCollectionPostController;
+use App\Controller\TradeGetController;
 use App\Filter\LikedByMeFilter;
 use App\Repository\TradeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -41,7 +42,8 @@ use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
             'openapi_context' => [
                 'security' => [['bearerAuth' => []]]
             ],
-//            'controller' => TradeGetController::class,
+
+            'controller' => TradeGetController::class,
             'security' => 'is_granted("TRADE_VIEW",object)'
         ],
         'delete' => [

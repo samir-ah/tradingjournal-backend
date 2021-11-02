@@ -182,11 +182,8 @@ class TradeImage
         return $this->fileUrl;
     }
 
-    /**
-     * @param string|null $fileUrl
-     * @return TradeImage
-     */
-    public function setFileUrl(?string $fileUrl): TradeImage
+
+    public function setFileUrl(?string $fileUrl): self
     {
         $this->fileUrl = $fileUrl;
         return $this;
