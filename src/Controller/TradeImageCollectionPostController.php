@@ -6,6 +6,7 @@ use App\Entity\TradeImage;
 use App\Repository\TradeRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -42,6 +43,10 @@ class TradeImageCollectionPostController extends AbstractController
                 $tradeImageObject->setFile( $uploadedFileForm) ;
             }
             else{ //upload from external url
+                if(str_starts_with($imageUrl,"https://www.tradingview.com")){
+                    $crawler = new Crawler(file_get_contents($imageUrl));
+                    $imageUrl = $crawler->filter('body > main > img')->first()->attr('src');
+                }
                 $fileUniqueName = md5(uniqid(rand(), true)) . ".png";
                 $filePathName = $this->appKernel->getProjectDir() . '/public/uploads/trades/' . $fileUniqueName;
                 copy($imageUrl, $filePathName);
