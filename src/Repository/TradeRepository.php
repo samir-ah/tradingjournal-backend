@@ -50,6 +50,19 @@ class TradeRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+    public function findPerformanceGroupByInstrument(int $userId, int $lastMonths): array
+    {
+        return $this->createQueryBuilder('t')
+            ->select('ti.name', 'SUM(t.finalRatio) AS ratio')
+            ->join('t.tradeInstrument','ti')
+            ->andWhere('t.author = :authorId')
+            ->andWhere("t.startAt > DATESUB(CURRENT_DATE(), :lastMonths, 'MONTH')")
+            ->groupBy("t.tradeInstrument")
+            ->setParameter('authorId', $userId)
+            ->setParameter('lastMonths', $lastMonths)
+            ->getQuery()
+            ->getResult();
+    }
 
     public function findPerformance(int $userId, int $lastMonths): array
     {

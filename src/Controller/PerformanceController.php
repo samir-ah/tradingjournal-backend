@@ -26,6 +26,7 @@ class PerformanceController extends AbstractController
             $performanceData = [];
             $performanceData["byTradePerformance"] = $this->tradeRepository->findPerformance($this->getUser()->getId(),12);
             $performanceData["groupByMonth"] = $this->tradeRepository->findPerformanceGroupByMonth($this->getUser()->getId(),12);
+            $performanceData["groupByInstrument"] = $this->tradeRepository->findPerformanceGroupByInstrument($this->getUser()->getId(),12);
             $performanceData["totalTrades"] = $this->tradeRepository->count(["author"=>$this->getUser()->getId()]);
             $performanceData["totalPerformance"] = $this->tradeRepository->findTotalPerformanceSum($this->getUser()->getId())["total"] ?? 0;
 
